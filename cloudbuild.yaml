@@ -1,0 +1,32 @@
+steps:
+- name: sharescape/hasura-cli-docker
+  id: "status"
+  waitFor: ['-']
+  env:
+  - 'HASURA_GRAPHQL_SERVER_HOST=$_HASURA_GRAPHQL_SERVER_HOST'
+  - 'HASURA_GRAPHQL_ADMIN_SECRET=$_HASURA_GRAPHQL_ADMIN_SECRET'
+  - 'HASURA_GRAPHQL_ENV_FILE=_HASURA_GRAPHQL_ENV_FILE'
+  args: [ 'migrate', "status" ]
+
+- name: sharescape/hasura-cli-docker
+  id: "metadata"
+  waitFor: ['status']
+  env:
+  - 'HASURA_GRAPHQL_SERVER_HOST=$_HASURA_GRAPHQL_SERVER_HOST'
+  - 'HASURA_GRAPHQL_ADMIN_SECRET=$_HASURA_GRAPHQL_ADMIN_SECRET'
+  - 'HASURA_GRAPHQL_ENV_FILE=_HASURA_GRAPHQL_ENV_FILE'
+  args: [ "metadata", "apply" ]
+
+- name: sharescape/hasura-cli-docker
+  id: "migrations"
+  waitFor: ['metadata']
+  env:
+  - 'HASURA_GRAPHQL_SERVER_HOST=$_HASURA_GRAPHQL_SERVER_HOST'
+  - 'HASURA_GRAPHQL_ADMIN_SECRET=$_HASURA_GRAPHQL_ADMIN_SECRET'
+  - 'HASURA_GRAPHQL_ENV_FILE=_HASURA_GRAPHQL_ENV_FILE'
+  args: [ 'migrate', "apply" ]
+
+substitutions:
+  _HASURA_GRAPHQL_SERVER_HOST: ""
+  _HASURA_GRAPHQL_ADMIN_SECRET: ""
+  _HASURA_GRAPHQL_ENV_FILE: ""
